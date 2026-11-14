@@ -1,40 +1,145 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>per.in</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User dashboard</title>
+    <link rel="stylesheet" href="{% static 'my_app/css/dashboard.css' %}">
 </head>
 <body>
-<div class="container mt-5 bg-light" style="border:1px solid ; background-color:#1111; border-radius: 10px;">
-    <h1 class="m-4 text-center">User Records <a href="/Add/" class="btn btn-primary">Add User</a></h1>
-    <table class="table table-bordered">
-        <tr class="bg-info text-white text-center ">
-            <td > SR NO.  </td>
-            <td> Name </td>
-            <td> Photo  </td>
-            <td> Email id </td>
-            <td> Password </td>
-            <td> Mobile Number</td>
-            <td>Date of birth</td>
-            <td> Action  </td>
-        </tr>
-        {%for rec in records %}
-        <tr class="text-center">
-            <td>{{forloop.counter}}</td>
-            <td>{{rec.name}}</td>
-            <td><img src="/media/{{rec.photo}}"class="rounded-circle" height="70px" width="70px"></td>
-            <td>{{rec.email}}</td>
-            <td>{{rec.password}}</td>
-            <td>{{rec.mobile_number}}</td>
-            <td>{{rec.date_of_birth}}
-            <td> <a href="/Edit/{{rec.id}}" class="btn btn-success">Edit</a>/
-                <a href="/Delete/{{rec.id}}" class="btn btn-danger">Delete</a>/
-                <a href="/View/{{rec.id}}" class="btn btn-primary">View</a>
-            </td>
-        </tr>
-    {%endfor%}
-    </table>
-</div>
+<main class="shell">
+    <header class="topbar">
+        <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true">U</span>
+            <span>People<span style="color: var(--accent)">Desk</span></span>
+        </a>
+        <span class="top-note">User management workspace</span>
+    </header>
+
+    <section class="intro">
+        <div>
+            <p class="eyebrow">Overview</p>
+            <h1>User dashboard</h1>
+            <p class="subtitle">A clear view of your people and their profile details.</p>
+        </div>
+        <a class="button" href="/Add/"><span aria-hidden="true">＋</span> Add user</a>
+    </section>
+
+    <section class="overview" aria-label="User overview">
+        <article class="metric">
+            <div><p class="metric-label">Total users</p><p class="metric-value">{{ total_users }}</p></div>
+            <span class="metric-icon" aria-hidden="true">♙</span>
+        </article>
+        <article class="metric">
+            <div><p class="metric-label">Birth-year groups</p><p class="metric-value">{{ birth_year_group_count }}</p></div>
+            <span class="metric-icon" aria-hidden="true">▥</span>
+        </article>
+        <article class="metric">
+            <div><p class="metric-label">Mobile numbers on file</p><p class="metric-value">{{ mobile_count }}</p></div>
+            <span class="metric-icon" aria-hidden="true">⌕</span>
+        </article>
+    </section>
+
+    <section class="middle-grid">
+        <article class="panel">
+            <div class="panel-heading"><h2>Birth-year distribution</h2><p>Users grouped by decade of birth</p></div>
+            {% if birth_year_chart %}
+            <div class="chart" role="img" aria-label="Number of users by birth decade">
+                {% for group in birth_year_chart %}
+                <div class="chart-row" aria-hidden="true">
+                    <span>{{ group.label }}</span>
+                    <div class="bar-track"><div class="bar" style="width: {{ group.width }}%"></div></div>
+                    <span class="chart-count">{{ group.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-chart">Add users with a date of birth to see the distribution.</p>
+            {% endif %}
+        </article>
+
+        <article class="panel">
+            <div class="panel-heading"><h2>Quick actions</h2><p>Common tasks, right at hand</p></div>
+            <div class="actions">
+                <a class="action-card" href="/Add/">
+                    <span class="action-icon" aria-hidden="true">＋</span>
+                    <span><span class="action-title">Add a user</span><span class="action-description">Create a new user profile</span></span>
+                    <span class="action-arrow" aria-hidden="true">›</span>
+                </a>
+                <a class="action-card" href="#directory">
+                    <span class="action-icon secondary" aria-hidden="true">☷</span>
+                    <span><span class="action-title">Browse directory</span><span class="action-description">Find and manage existing users</span></span>
+                    <span class="action-arrow" aria-hidden="true">›</span>
+                </a>
+            </div>
+        </article>
+    </section>
+
+    <section class="panel directory" id="directory" aria-labelledby="directory-title">
+        <div class="directory-head">
+            <h2 id="directory-title">User directory <span style="color: var(--muted); font-weight: 500">({{ total_users }})</span></h2>
+            <input id="user-search" class="search" type="search" placeholder="Search name, email or mobile" aria-label="Search users">
+        </div>
+        {% if records %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>#</th><th>User</th><th>Email</th><th>Mobile</th><th>Date of birth</th><th>Actions</th></tr></thead>
+                <tbody>
+                    {% for rec in records %}
+                    <tr class="user-row">
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <span class="person">
+                                {% if rec.photo and rec.photo.name != "a.png" %}
+                                <img class="avatar" src="{{ rec.photo.url }}" alt="">
+                                {% else %}
+                                <span class="avatar initial" aria-hidden="true">{{ rec.name|first|upper }}</span>
+                                {% endif %}
+                                {{ rec.name }}
+                            </span>
+                        </td>
+                        <td class="email">{{ rec.email }}</td>
+                        <td>{{ rec.mobile_number }}</td>
+                        <td>{{ rec.date_of_birth|date:"M j, Y" }}</td>
+                        <td>
+                            <div class="row-actions">
+                                <a class="row-action" href="/View/{{ rec.id }}">View</a>
+                                <a class="row-action" href="/Edit/{{ rec.id }}">Edit</a>
+                                <a class="row-action delete" href="/Delete/{{ rec.id }}">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" id="no-search-results" hidden>No users match that search.</div>
+        {% else %}
+        <div class="empty-state">
+            <strong>Your directory is ready for its first user</strong>
+            Add a profile to start seeing your users and dashboard insights.
+            <p><a class="button" href="/Add/" style="margin-top: 14px">Add your first user</a></p>
+        </div>
+        {% endif %}
+    </section>
+</main>
+<script>
+    const searchInput = document.getElementById('user-search');
+    const userRows = document.querySelectorAll('.user-row');
+    const noResults = document.getElementById('no-search-results');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim().toLowerCase();
+            let visibleCount = 0;
+            userRows.forEach((row) => {
+                const matches = row.textContent.toLowerCase().includes(query);
+                row.hidden = !matches;
+                if (matches) visibleCount += 1;
+            });
+            if (noResults) noResults.hidden = visibleCount > 0;
+        });
+    }
+</script>
 </body>
 </html>
