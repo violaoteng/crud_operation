@@ -1,20 +1,35 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Delete user | PeopleDesk</title>
+    <link rel="stylesheet" href="{% static 'my_app/css/dashboard.css' %}">
 </head>
 <body>
-<div class='container mt-5'>
-    <div class="col-sm-6 text-center badge-warning" style="margin-left: 250px; border: 1px; border-radius: 10px ; padding: 10px;">
-        <h1 class="bg-primary">Are you want to delete..?</h1>
-        <form method="post" style="align-items:center;">
-            {%csrf_token%}
-            <button type="submit" class="btn btn-danger"> Confirm </button>
-            <a href="/" class="btn btn-success"> Back</a>
+<main class="shell">
+    <header class="topbar">
+        <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true">U</span>
+            <span>People<span style="color: var(--accent)">Desk</span></span>
+        </a>
+        <span class="top-note">User management workspace</span>
+    </header>
+
+    <section class="panel content-card">
+        <span class="confirmation-icon" aria-hidden="true">!</span>
+        <p class="eyebrow">Please confirm</p>
+        <h2>Delete this user?</h2>
+        <p class="content-intro">This action permanently removes the user record. This cannot be undone.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button class="danger-button" type="submit">Delete user</button>
+                <a class="secondary-button" href="/">Cancel</a>
+            </div>
         </form>
-    </div>
-</div>
+    </section>
+</main>
 </body>
 </html>

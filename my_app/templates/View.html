@@ -1,41 +1,54 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>view</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User details | PeopleDesk</title>
+    <link rel="stylesheet" href="{% static 'my_app/css/dashboard.css' %}">
 </head>
 <body>
-<div class="container-fluid my-5">
-    <div class="w-50 m-auto p-4 bg-info ">
-        <h2 class="text-center mt-4"> User Details</h2>
-        <table class="table bg-white">
-            <tr>
-                <th>Photo</th>
-                <td><img src="/media/{{user.photo}} " class="rounded  d-block" height="100px" width="120px"></td>
-            </tr>
-            <tr>
-                <th>User name</th>
-                <td>{{user.name}}</td>
-            </tr>
+<main class="shell">
+    <header class="topbar">
+        <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true">U</span>
+            <span>People<span style="color: var(--accent)">Desk</span></span>
+        </a>
+        <span class="top-note">User management workspace</span>
+    </header>
 
-            <tr>
-                <th> Email </th>
-                <td>{{user.email}}</td>
-            </tr>
-            <tr>
-                <th>Mobile_Number</th>
-                <td>{{user.mobile_number}}</td>
-            </tr>
-            <tr>
-                <th>Date of Birth</th>
-                <td>{{user.date_of_birth}}</td>
-            </tr>
+    <section class="panel content-card">
+        <p class="eyebrow">User directory</p>
+        <h2>User details</h2>
+        <p class="content-intro">Profile information for {{ user.name }}.</p>
+        {% if user.photo and user.photo.name != "a.png" %}
+        <img class="profile-photo" src="{{ user.photo.url }}" alt="Profile photo of {{ user.name }}">
+        {% endif %}
+        <table class="detail-table">
+            <tbody>
+                <tr>
+                    <th scope="row">Name</th>
+                    <td>{{ user.name }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Email</th>
+                    <td>{{ user.email }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Mobile number</th>
+                    <td>{{ user.mobile_number }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Date of birth</th>
+                    <td>{{ user.date_of_birth|date:"M j, Y" }}</td>
+                </tr>
+            </tbody>
         </table>
-    </div>
-    <div class="text-center">
-        </button><a href="/" class="btn btn-success"> Back </button></a>
-    </div>
-</div>
+        <div class="form-actions">
+            <a class="button" href="/Edit/{{ user.id }}">Edit user</a>
+            <a class="secondary-button" href="/">Back to dashboard</a>
+        </div>
+    </section>
+</main>
 </body>
 </html>
